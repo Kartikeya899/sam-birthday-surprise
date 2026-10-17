@@ -1,0 +1,1 @@
+Add your images here. Use memory-1.jpg, memory-2.jpg, memory-3.jpg (or edit src/App.jsx to match your filenames).
