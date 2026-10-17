@@ -87,7 +87,7 @@ const MEMORIES = Array.from({ length: 20 }, (_, index) => ({
 }));
 
 
-const VIDEO_PATH = "/videos/friends-wishes.mp4";
+const VIDEO_PATH = "https://res.cloudinary.com/cbtcowgf/video/upload/v1792256763/Friends-Wishes-compressed.mp4";
 const MUSIC_PATH = "/music/birthday.mp3";
 const LOVE_NOTE = `Happy Birthday, Sam. 💗
 
@@ -134,6 +134,17 @@ export default function App() {
   const [videoError, setVideoError] = useState(false);
   const [openPhoto, setOpenPhoto] = useState(null);
   const audioRef = useRef(null);
+
+  // Birthday unlock time: October 18, 2026 at 12:00 AM India Standard Time.
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const unlockAt = new Date("2026-10-18T00:00:00+05:30").getTime();
+  const birthdayUnlocked = now >= unlockAt;
 
   const currentLevel = QUIZ_LEVELS[level];
   const currentQuestion = currentLevel?.questions[questionIndex];
@@ -225,7 +236,28 @@ export default function App() {
         </div>
       )}
 
-      {screen === "welcome" && (
+      {!birthdayUnlocked && (
+        <section className="hero page-enter" id="top">
+          <div className="hero-kicker"><Sparkles size={14} /> A little universe made just for you</div>
+          <div className="hero-art">
+            <div className="orbit orbit-a" />
+            <div className="orbit orbit-b" />
+            <div className="moon">S<span>♡</span></div>
+            <div className="tiny-star star-a">✦</div>
+            <div className="tiny-star star-b">✧</div>
+            <div className="tiny-star star-c">✦</div>
+          </div>
+          <p className="overline">SUNDAY · OCTOBER 18, 2026</p>
+          <h1>Almost time,<br /><em>birthday girl.</em></h1>
+          <p className="hero-copy">
+            Your little universe is waiting.
+            Come back at midnight to unlock your birthday surprise. 💗
+          </p>
+          <div className="hero-foot"><span /> made with a whole lot of love <Heart size={12} fill="currentColor" /></div>
+        </section>
+      )}
+
+      {birthdayUnlocked && screen === "welcome" && (
         <section className="hero page-enter" id="top">
           <div className="hero-kicker"><Sparkles size={14} /> A little universe made just for you</div>
           <div className="hero-art">
@@ -246,7 +278,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === "quiz" && currentQuestion && (
+      {birthdayUnlocked && screen === "quiz" && currentQuestion && (
         <section className="quiz-page page-enter">
           <div className="section-icon"><LockKeyhole size={21} /></div>
           <Progress level={level + 1} />
@@ -290,7 +322,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === "reveal" && (
+      {birthdayUnlocked && screen === "reveal" && (
         <section className="reveal-page page-enter" aria-labelledby="reveal-title">
           <div className="reveal-stars" aria-hidden="true">
             {Array.from({ length: 22 }, (_, i) => <span key={i} style={{ "--i": i }}>{i % 3 === 0 ? "✦" : "♡"}</span>)}
@@ -314,7 +346,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === "unlocked" && (
+      {birthdayUnlocked && screen === "unlocked" && (
         <section className="unlocked-page page-enter">
           <div className="celebration-icon"><Gift size={34} /></div>
           <p className="overline">ALL THREE LEVELS COMPLETE</p>
@@ -338,7 +370,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === "gallery" && (
+      {birthdayUnlocked && screen === "gallery" && (
         <section className="content-page page-enter">
           <button className="back-button" onClick={() => setScreen("unlocked")}>← All your surprises</button>
           <p className="overline">CHAPTER ONE · THE SCRAPBOOK</p>
@@ -357,7 +389,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === "video" && (
+      {birthdayUnlocked && screen === "video" && (
         <section className="content-page video-page page-enter">
           <button className="back-button" onClick={() => setScreen("unlocked")}>← All your surprises</button>
           <div className="video-sparkle"><Gift size={27} /></div>
@@ -374,7 +406,7 @@ export default function App() {
               <div className="video-placeholder">
                 <Play size={34} />
                 <h3>Your friends' wishes go here</h3>
-                <p>Add your combined video at <code>public/videos/friends-wishes.mp4</code>.</p>
+                <p>The video could not be loaded. Please check the video link and try again.</p>
               </div>
             )}
           </div>
@@ -387,7 +419,7 @@ export default function App() {
         </section>
       )}
 
-      {openPhoto && (
+      {birthdayUnlocked && openPhoto && (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={openPhoto.title} onClick={() => setOpenPhoto(null)}>
           <button className="lightbox-close" onClick={() => setOpenPhoto(null)} aria-label="Close photo">×</button>
           <img src={openPhoto.src} alt={openPhoto.title} onClick={(e) => e.stopPropagation()} />
